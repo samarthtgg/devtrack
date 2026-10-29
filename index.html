@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <meta name="description" content="DevTrack is a developer productivity dashboard for tasks, projects, coding activity, and public GitHub repository insights.">
+  <title>DevTrack — Developer Productivity</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237c6cff'/%3E%3Cpath d='M26 28h27c18 0 27 9 27 22S71 72 53 72H26z' fill='none' stroke='white' stroke-width='8' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="DevTrack home">
+        <span class="brand-mark">D</span><span>devtrack<span class="brand-dot">.</span></span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link active" href="#overview" data-section="overview"><span class="nav-icon">▦</span> Overview</a>
+        <a class="nav-link" href="#tasks" data-section="tasks"><span class="nav-icon">☷</span> My tasks <span class="nav-count" id="nav-task-count">0</span></a>
+        <a class="nav-link" href="#projects" data-section="projects"><span class="nav-icon">◇</span> Projects</a>
+        <a class="nav-link" href="#github" data-section="github"><span class="nav-icon">⌘</span> GitHub insights</a>
+        <a class="nav-link" href="#activity" data-section="activity"><span class="nav-icon">▦</span> Coding activity</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip">
+          <div class="tip-icon">✦</div>
+          <strong>Small steps add up.</strong>
+          <p>Log your coding today and keep your streak alive.</p>
+          <button class="btn btn-primary btn-small full-width" id="sidebar-log-btn">+ Log activity</button>
+        </div>
+        <div class="profile-mini">
+          <div class="avatar" id="profile-avatar">D</div>
+          <div class="profile-copy"><strong id="profile-name">Developer</strong><span>Personal workspace</span></div>
+          <button class="icon-button" id="settings-btn" title="Settings" aria-label="Settings">⚙</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="menu-toggle" aria-label="Toggle menu">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="page-name">Overview</strong></div>
+        <div class="topbar-actions">
+          <span class="live-dot"></span><span class="sync-label">Saved in this browser</span>
+          <button class="icon-button" id="export-btn" title="Export backup" aria-label="Export backup">⇩</button>
+          <button class="avatar top-avatar" id="top-avatar" title="Edit profile">D</button>
+        </div>
+      </header>
+
+      <div class="page-wrap">
+        <section class="welcome-row">
+          <div>
+            <p class="eyebrow" id="today-label">YOUR DEVELOPER WORKSPACE</p>
+            <h1 id="welcome-title">Make progress, <span class="gradient-text">every day.</span></h1>
+            <p class="subheading">Your projects, tasks, and coding momentum — all in one place.</p>
+          </div>
+          <div class="welcome-actions">
+            <button class="btn btn-secondary" id="log-activity-btn">＋ Log coding</button>
+            <button class="btn btn-primary" id="add-task-top">＋ New task</button>
+          </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Summary statistics">
+          <article class="stat-card">
+            <div class="stat-top"><span class="stat-label">Tasks completed</span><span class="stat-icon purple">✓</span></div>
+            <div class="stat-value" id="stat-completed">0</div>
+            <div class="stat-foot"><span class="stat-note" id="stat-task-note">0 tasks remaining</span><span class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span class="stat-label">Active projects</span><span class="stat-icon blue">◇</span></div>
+            <div class="stat-value" id="stat-projects">0</div>
+            <div class="stat-foot"><span class="stat-note">Personal projects tracked</span><span class="stat-symbol">↗</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span class="stat-label">Coding streak</span><span class="stat-icon orange">ϟ</span></div>
+            <div class="stat-value"><span id="stat-streak">0</span><small> days</small></div>
+            <div class="stat-foot"><span class="stat-note" id="streak-note">Start with one session</span><span class="stat-symbol">✦</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span class="stat-label">GitHub stars</span><span class="stat-icon green">☆</span></div>
+            <div class="stat-value" id="stat-stars">—</div>
+            <div class="stat-foot"><span class="stat-note" id="stat-github-note">Connect a username</span><span class="stat-symbol">⌘</span></div>
+          </article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel activity-panel" id="activity">
+            <div class="panel-heading">
+              <div><h2>Coding activity</h2><p class="panel-subtitle">Your locally logged sessions over the last 12 weeks</p></div>
+              <span class="pill"><span class="pill-dot"></span><span id="activity-total">0 sessions</span></span>
+            </div>
+            <div class="heatmap-wrap">
+              <div class="weekday-labels"><span>Mon</span><span>Wed</span><span>Fri</span></div>
+              <div class="heatmap" id="heatmap" aria-label="Coding activity calendar"></div>
+            </div>
+            <div class="heatmap-legend"><span>Less</span><i class="level-0"></i><i class="level-1"></i><i class="level-2"></i><i class="level-3"></i><i class="level-4"></i><span>More</span><button class="text-button" id="heatmap-log">Log today's activity ↗</button></div>
+          </article>
+
+          <article class="panel weekly-panel">
+            <div class="panel-heading"><div><h2>Weekly focus</h2><p class="panel-subtitle">Task completion this week</p></div><span class="select-label">This week</span></div>
+            <div class="weekly-summary"><strong id="weekly-count">0</strong><span>tasks completed</span><span class="weekly-change" id="weekly-percent">0%</span></div>
+            <div class="chart-area" id="weekly-chart" aria-label="Weekly task completion chart"></div>
+            <div class="chart-xlabels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </article>
+        </section>
+
+        <section class="lower-grid">
+          <article class="panel tasks-panel" id="tasks">
+            <div class="panel-heading"><div><h2>Priority tasks</h2><p class="panel-subtitle">Keep your next steps clear</p></div><button class="text-button" id="view-all-tasks">View all ↗</button></div>
+            <div id="task-preview" class="task-list"></div>
+            <button class="add-inline" id="add-task-inline">＋ Add a task</button>
+          </article>
+          <article class="panel projects-panel" id="projects">
+            <div class="panel-heading"><div><h2>Your projects</h2><p class="panel-subtitle">Things you're building</p></div><button class="text-button" id="add-project-btn">＋ Add project</button></div>
+            <div id="project-preview" class="project-list"></div>
+          </article>
+        </section>
+
+        <section class="panel github-panel" id="github">
+          <div class="panel-heading github-heading">
+            <div class="github-title"><span class="github-logo">⌘</span><div><h2>GitHub insights</h2><p class="panel-subtitle">Public profile and repository statistics via the GitHub API</p></div></div>
+            <span class="api-status" id="api-status"><i></i> Not connected</span>
+          </div>
+          <form id="github-form" class="github-connect">
+            <label for="github-username">GitHub username</label>
+            <div class="connect-row"><div class="input-with-icon"><span>@</span><input id="github-username" name="username" placeholder="octocat" autocomplete="off" maxlength="39"></div><button class="btn btn-primary" id="github-connect-btn" type="submit">Connect profile</button></div>
+            <p class="field-help">Uses public GitHub data only. No access token or password is requested.</p>
+          </form>
+          <div id="github-results" class="github-results hidden">
+            <div class="github-profile" id="github-profile"></div>
+            <div class="repo-grid" id="repo-grid"></div>
+          </div>
+          <div class="github-empty" id="github-empty"><div class="empty-glyph">⌘</div><strong>Your GitHub, at a glance</strong><p>Enter your username to load public repositories, stars, forks, and primary languages.</p></div>
+        </section>
+
+        <footer class="footer"><span>Built for consistent progress <span class="footer-heart">♥</span></span><span>DevTrack · <span id="footer-year"></span></span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+  <dialog class="modal" id="task-modal">
+    <form id="task-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">TASK MANAGEMENT</p><h2 id="task-modal-title">Create a task</h2></div><button class="icon-button close-modal" type="button" data-close="task-modal" aria-label="Close">×</button></div>
+      <input type="hidden" id="task-id">
+      <label for="task-title">Task name</label><input class="form-control" id="task-title" required maxlength="120" placeholder="e.g. Finish portfolio homepage">
+      <div class="form-two-col"><div><label for="task-priority">Priority</label><select class="form-control" id="task-priority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div><div><label for="task-due">Due date</label><input class="form-control" id="task-due" type="date"></div></div>
+      <label for="task-project">Related project (optional)</label><select class="form-control" id="task-project"><option value="">No project</option></select>
+      <label for="task-notes">Notes (optional)</label><textarea class="form-control" id="task-notes" rows="3" maxlength="500" placeholder="What does done look like?"></textarea>
+      <div class="modal-actions"><button class="btn btn-secondary" type="button" data-close="task-modal">Cancel</button><button class="btn btn-primary" type="submit">Save task</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="project-modal">
+    <form id="project-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">PROJECT TRACKER</p><h2 id="project-modal-title">Add a project</h2></div><button class="icon-button close-modal" type="button" data-close="project-modal" aria-label="Close">×</button></div>
+      <input type="hidden" id="project-id">
+      <label for="project-name">Project name</label><input class="form-control" id="project-name" required maxlength="100" placeholder="e.g. DevTrack">
+      <label for="project-description">Short description</label><textarea class="form-control" id="project-description" rows="2" maxlength="300" placeholder="What problem does it solve?"></textarea>
+      <label for="project-tech">Tech stack (comma separated)</label><input class="form-control" id="project-tech" maxlength="180" placeholder="HTML, CSS, JavaScript">
+      <label for="project-url">GitHub or live demo URL (optional)</label><input class="form-control" id="project-url" type="url" placeholder="https://github.com/username/repo">
+      <div class="modal-actions"><button class="btn btn-secondary" type="button" data-close="project-modal">Cancel</button><button class="btn btn-primary" type="submit">Save project</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="settings-modal">
+    <form id="settings-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">PERSONALIZE</p><h2>Workspace settings</h2></div><button class="icon-button close-modal" type="button" data-close="settings-modal" aria-label="Close">×</button></div>
+      <label for="display-name">Your display name</label><input class="form-control" id="display-name" maxlength="50" placeholder="Developer">
+      <label for="settings-github">GitHub username</label><input class="form-control" id="settings-github" maxlength="39" placeholder="username">
+      <div class="modal-actions"><button class="btn btn-secondary" type="button" data-close="settings-modal">Cancel</button><button class="btn btn-primary" type="submit">Save settings</button></div>
+      <p class="field-help">Your profile, tasks, projects, and activity are saved in this browser. Export a backup before clearing browser data.</p>
+      <div class="settings-data-actions"><button class="btn btn-secondary" id="import-backup-btn" type="button">Import JSON backup</button><button class="danger-button" id="clear-data-btn" type="button">Clear all DevTrack data</button></div>
+    </form>
+  </dialog>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+</body>
+</html>
